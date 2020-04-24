@@ -6,21 +6,22 @@ using UnityEngine.UI;
 
 public class Manager : MonoBehaviour
 {
-    public GameObject prefab;
-    private GameObject newObj;
+    //public GameObject pauseMenu;
+    //private bool isPaused = true;
 
-    public GameObject pauseMenu;
-    private bool isPaused = true;
+    public float fuerza = 2;
 
-
+    public Color defaultColor;
+    public Color newColor;
+    public RenderBuffer render;
 
     // Start is called before the first frame update
     void Start()
     {
         Time.timeScale = 1.0f;
 
-        if (prefab)
-            newObj = Instantiate(prefab, new Vector3(0, 3, 0), Quaternion.identity);
+       // if (prefab)
+       //     newObj = Instantiate(prefab, new Vector3(0, 3, 0), Quaternion.identity);
 
     }
 
@@ -31,20 +32,39 @@ public class Manager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             TogglePause();
 
-        if(Input.GetKeyDown(KeyCode.Return) && !newObj)
-            newObj = Instantiate(prefab, new Vector3(0, 3, 0), Quaternion.identity);
+        //if(Input.GetKeyDown(KeyCode.Return) && !newObj)
+            //newObj = Instantiate(prefab, new Vector3(0, 3, 0), Quaternion.identity);
 
+
+        RaycastHit hitInfo;
+        Ray Myray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (Physics.Raycast(Myray, out hitInfo, 100.0f))
+            {
+                if (hitInfo.transform != null)
+                {
+                    Rigidbody rb;
+
+                    if (rb = hitInfo.transform.GetComponent<Rigidbody>())
+                    {
+                        rb.AddForce(-hitInfo.normal * fuerza, ForceMode.Impulse);
+                    }
+                }
+            }
+        }
     }
 
     public void TogglePause() 
     {
 
-        if (pauseMenu)
+        /*if (pauseMenu)
         {
             pauseMenu.SetActive(!pauseMenu.activeSelf);
             isPaused = !isPaused;
             Time.timeScale = isPaused ? 1.0f : 0.0f;
-        }
+        }*/
     
     }
 
@@ -54,16 +74,18 @@ public class Manager : MonoBehaviour
 
     }
 
-    public void IniciarJuego() {
+    public void Inicio() {
 
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene("CharacterFirstPerson");
     }
 
-    public void RestartScene() 
+    public void OnMouseOver()
     {
-
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-
+        GetComponent<MeshRenderer>().material.color = Color.black;
     }
 
+    public void OnMouseExit()
+    {
+        GetComponent<MeshRenderer>().material.color = Color.white;
+    }
 }
